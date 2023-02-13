@@ -28,7 +28,7 @@ class NeutrinoElectronScattering {
   }
 
   double electronmass(void) { return me;}
-  double muonmass(void) { return mmu;} 
+  double muonmass(void) { return mmu;}
   double taumass(void) { return mtau;}
   double S(double Enu) { return (Enu+electronmass())*(Enu+electronmass())-Enu*Enu;}
   double Y(double Enu,double Ee) { return (Ee-electronmass())/Enu; }
@@ -98,17 +98,8 @@ class NeutrinoElectronScattering {
   
   double GetCosine(double Enu,double El,int neutrino){
 
-    double mass;
+    double mass = me; // This is only for electron in final state.
 
-    if( abs(neutrino) == neutrinoelectron )
-      mass = me;
-    else if( abs(neutrino) == neutrinomuon )
-      mass = mmu;
-    else if( abs(neutrino) == neutrinotau )
-      mass = mtau;
-    else
-      mass = 1.e+32; 
-    
     double Pl = sqrt(El*El-mass*mass); 
    
     return (El*mass+Enu*El-mass*mass-Enu*mass)/Enu/Pl;
@@ -117,34 +108,6 @@ class NeutrinoElectronScattering {
 
  private:
   
-    double GENnule(double Enu, double &El,double &cos, bool aneut = false ){
-    
-    double norm = GF2/Pi*MeV2mbarn;
-
-    double s = S(Enu); 
-    
-    double CLL;
-    double CLR; 
-    
-    CLL = 1./2.+sin2w;
-    CLR = sin2w;
-    
-    double ymax = (Enu-me)/Enu;
-    
-    double N = nuleInt(Enu,aneut)/norm/s;
-
-    double y1 = GenerateY(CLL,CLR,N); 
-    
-    El = y1*Enu+me;
-
-    cos = GetCosine(Enu,El,neutrinoelectron);
-    
-    // std::cout << x1 << std::endl;
-    
-    return  nule( Enu,  El, aneut );
-    
-  }
-
   
   double GenerateY(double CLL,double CLR,double N) {
     double r = (double)rand()/(double)RAND_MAX;
@@ -178,7 +141,133 @@ class NeutrinoElectronScattering {
 
  }
 
-    double GENnuee(double Enu, double &El,double &cos, bool aneut = false ){
+
+
+
+  
+  double nule(double Enu, double Ee, bool aneut = false ){
+    
+    double y = Y(Enu,Ee);
+    
+    double CLL;
+    double CLR; 
+    
+    if( !aneut ) {
+      CLL = -1./2.+sin2w;
+      CLR = sin2w;
+    }
+    else {      
+      CLL = sin2w;
+      CLR = -1./2.+sin2w;
+    }
+    
+    return Normalization()*S(Enu)*(CLL*CLL+CLR*CLR*(1-y)*(1-y)); 
+    
+  }
+
+  double nuleInt(double Enu, bool aneut = false ){
+    
+    double norm = GF2/Pi*MeV2mbarn;
+    
+    double s = S(Enu); 
+    
+    double CLL;
+    double CLR; 
+     
+   if( !aneut ) {
+      CLL = -1./2.+sin2w;
+      CLR = sin2w;
+    }
+    else {      
+      CLL = sin2w;
+      CLR = -1./2.+sin2w;
+    }
+
+    double ymax = (Enu-me)/Enu;
+    
+    return norm*s*(CLL*CLL*ymax+CLR*CLR*1./3.*(-(1-ymax)*(1.-ymax)*(1-ymax)+1.));
+  }
+
+  double GENnule(double Enu, double &El,double &cos, bool aneut = false ){
+    
+    double norm = GF2/Pi*MeV2mbarn;
+
+    double s = S(Enu); 
+    
+    double CLL;
+    double CLR; 
+    
+     if( !aneut ) {
+      CLL = -1./2.+sin2w;
+      CLR = sin2w;
+    }
+    else {      
+      CLL = sin2w;
+      CLR = -1./2.+sin2w;
+    }
+    
+    double ymax = (Enu-me)/Enu;
+    
+    double N = nuleInt(Enu,aneut)/norm/s;
+
+    double y1 = GenerateY(CLL,CLR,N); 
+    
+    El = y1*Enu+me;
+
+    cos = GetCosine(Enu,El,neutrinoelectron);
+    
+    // std::cout << x1 << std::endl;
+    
+    return  nule( Enu,  El, aneut );
+    
+  }
+
+  double nueeInt(double Enu, bool aneut = false ){
+        
+    double CLL;
+    double CLR; 
+    
+    if( !aneut ) {
+      CLL = 1./2.+sin2w;
+      CLR = sin2w;
+    }
+    else {
+      CLL = -1./2.+sin2w;
+      CLR = 1./2.+sin2w;  
+    }
+
+    double ymax = (Enu-me)/Enu;
+    
+    return Normalization()*S(Enu)*(CLL*CLL*ymax+CLR*CLR*1./3.*(-(1-ymax)*(1.-ymax)*(1-ymax)+1.)); 
+    
+  }
+
+  
+  double nuee(double Enu, double Ee, bool aneut = false ){
+    
+    double norm = GF2/Pi*MeV2mbarn;
+
+    double s = S(Enu); 
+    
+    double y = Y(Enu,Ee); 
+    
+    double CLL;
+    double CLR; 
+    
+    if( !aneut ) {
+      CLL = 1./2.+sin2w;
+      CLR = sin2w;
+    }
+    else {
+      CLL = -1./2.+sin2w;
+      CLR = 1./2.+sin2w;  
+    }
+    
+    return norm*s*(CLL*CLL+CLR*CLR*(1-y)*(1-y)); 
+    
+  }
+
+ double GENnuee(double Enu, double &El,double &cos, bool aneut = false ){
             
     double CLL;
     double CLR; 
@@ -207,88 +296,6 @@ class NeutrinoElectronScattering {
     return   nuee( Enu,  El, aneut );
     
   }
-
-    
-
-  double nueeInt(double Enu, bool aneut = false ){
-        
-    double CLL;
-    double CLR; 
-    
-    if( !aneut ) {
-      CLL = 1./2.+sin2w;
-      CLR = sin2w;
-    }
-    else {
-      CLL = -1./2.+sin2w;
-      CLR = 1./2.+sin2w;  
-    }
-
-    double ymax = (Enu-me)/Enu;
-    
-    return Normalization()*S(Enu)*(CLL*CLL*ymax+CLR*CLR*1./3.*(-(1-ymax)*(1.-ymax)*(1-ymax)+1.)); 
-    
-  }
-  
-  double nule(double Enu, double Ee, bool aneut = false ){
-    
-    double y = Y(Enu,Ee);
-    
-    double CLL;
-    double CLR; 
-    
-    
-    CLL = 1./2.+sin2w;
-    CLR = sin2w;
-    
-    return Normalization()*S(Enu)*(CLL*CLL+CLR*CLR*(1-y)*(1-y)); 
-    
-  }
-
-  double nuleInt(double Enu, bool aneut = false ){
-    
-    double norm = GF2/Pi*MeV2mbarn;
-    
-    double s = S(Enu); 
-    
-    double CLL;
-    double CLR; 
-     
-    CLL = 1./2.+sin2w;
-    CLR = sin2w;
-
-
-    double ymax = (Enu-me)/Enu;
-    
-    return norm*s*(CLL*CLL*ymax+CLR*CLR*1./3.*(-(1-ymax)*(1.-ymax)*(1-ymax)+1.));
-  }
-
-  
-  double nuee(double Enu, double Ee, bool aneut = false ){
-    
-    double norm = GF2/Pi*MeV2mbarn;
-
-    double s = S(Enu); 
-    
-    double y = Y(Enu,Ee); 
-    
-    double CLL;
-    double CLR; 
-    
-    if( !aneut ) {
-      CLL = 1./2.+sin2w;
-      CLR = sin2w;
-    }
-    else {
-      CLL = -1./2.+sin2w;
-      CLR = 1./2.+sin2w;  
-    }
-    
-    return norm*s*(CLL*CLL+CLR*CLR*(1-y)*(1-y)); 
-    
-  }
-
-
   
 };
 
