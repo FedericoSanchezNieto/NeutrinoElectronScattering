@@ -1,0 +1,17 @@
+
+
+  double mass = me; // This is only for electron in final state.
+
+    double Pl = sqrt(El*El-mass*mass); 
+   
+    return (El*mass+Enu*El-mass*mass-Enu*mass)/Enu/Pl;
+
+
+
+    {
+      TF3 *f = new TF3("f","(x*0.511-0.511*0.511)/(x+0.511+TMath::Sqrt(x*x-0.511*0.511)*y+x+0.511)",0.,100.,-1.,1.); 
+
+
+
+      
+    }

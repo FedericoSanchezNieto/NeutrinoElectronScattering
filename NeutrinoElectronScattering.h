@@ -106,6 +106,19 @@ class NeutrinoElectronScattering {
 
   }
 
+  double GetEnu(double Cosine,double El,int neutrino){
+
+    double mass = me; // This is only for electron in final state.
+
+    double Pl = sqrt(El*El-mass*mass); 
+   
+    return (El*mass-mass*mass)(Enu+mass+Pl*Cosine);
+
+  }
+  
+ TF2 *f = new TF2("f","(x*0.511-0.511*0.511)/(x+0.511+TMath::Sqrt(x*x-0.511*0.511)*y)",0.511,1000.,-1.,1.); 
+
+  
  private:
   
   
