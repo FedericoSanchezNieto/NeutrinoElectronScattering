@@ -4,25 +4,38 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <iostream>
 
 class NeutrinoElectronScattering {
   
  private:
-  double sin2w = 0.23121; 
-  double gv = -1./2.+2.*sin2w;
-  double ga = -1./2.;
-  double me = 0.510998950; // MeV
-  double mmu = 105.6583755; // MeV
-  double mtau = 1776.86; // MeV
+  double sin2w ; 
+  double gv; 
+  double ga;
+  double me;
+  double mmu;
+  double mtau;
   
-  double Pi = 3.1415927;
-  double GF = 1.166378e-5; //  GeV^-2 
-  double GF2 =  GF*GF;
-  double MeV2mbarn = 1./2.56819e+6;   
+  double Pi;
+  double GF;
+  double GF2;
+  double MeV2mbarn;
 
   
  public:             // Access specifier
   NeutrinoElectronScattering () {
+
+    sin2w = 0.23121; 
+    gv = -1./2.+2.*sin2w;
+    ga = -1./2.;
+    me = 0.510998950; // MeV
+    mmu = 105.6583755; // MeV
+    mtau = 1776.86; // MeV
+  
+    Pi = 3.1415927;
+    GF = 1.166378e-5; //  GeV^-2 
+    GF2 =  GF*GF;
+    MeV2mbarn = 1./2.56819e+6;   
 
     std::cout<< " Neutrino-Electron scattering Initialised " << std::endl;
   }
@@ -38,8 +51,6 @@ class NeutrinoElectronScattering {
     bool aneut = false; 
 
     if( neutrino < 0 ) aneut = true;  // It is anti-neutrino 
-
-    //  std::cout << abs(neutrino) << "  " <<  aneut << std::endl; 
 
     double xs = 0;
 
@@ -87,8 +98,6 @@ class NeutrinoElectronScattering {
       xs =  nueeInt(Enu,aneut);
     else
       xs = nuleInt(Enu,aneut); 
-
-    //  std::cout << Enu << "  " << xs << std::endl;
     
     if( xs < 0 ) xs = 0;
 
@@ -112,12 +121,10 @@ class NeutrinoElectronScattering {
 
     double Pl = sqrt(El*El-mass*mass); 
    
-    return (El*mass-mass*mass)(Enu+mass+Pl*Cosine);
+    return (El*mass-mass*mass)/(El+mass+Pl*Cosine);
 
   }
   
- TF2 *f = new TF2("f","(x*0.511-0.511*0.511)/(x+0.511+TMath::Sqrt(x*x-0.511*0.511)*y)",0.511,1000.,-1.,1.); 
-
   
  private:
   
@@ -146,7 +153,6 @@ class NeutrinoElectronScattering {
 
     double S2 = -pow(sqrt(discriminant)-R,1./3.); 
 
-    //    std::cout << discriminant << " S1= " << S1 << "  S2= " << S2 << std::endl; 
 
     double x1 = S1+S2;
 
@@ -229,7 +235,6 @@ class NeutrinoElectronScattering {
 
     cos = GetCosine(Enu,El,neutrinoelectron);
     
-    // std::cout << x1 << std::endl;
     
     return  nule( Enu,  El, aneut );
     
@@ -303,9 +308,7 @@ class NeutrinoElectronScattering {
     El = y1*Enu+me;
 
     cos = GetCosine(Enu,El,neutrinoelectron);
-    
-    //    if( aneut )  std::cout << y1 << std::endl;
-    
+        
     return   nuee( Enu,  El, aneut );
     
   }

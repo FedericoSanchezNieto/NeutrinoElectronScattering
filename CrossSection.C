@@ -1,5 +1,11 @@
-#include "NeutrinoElectronScattering.h" 
-
+#include "NeutrinoElectronScattering.h"
+#include "TROOT.h"
+#include "TH1F.h"
+#include "TH2F.h"
+#include "TF2.h"
+#include "TCanvas.h"
+#include "TRandom.h"
+#include <iostream> 
 
 void CrossSection(double EnuIn = 10.){
 
