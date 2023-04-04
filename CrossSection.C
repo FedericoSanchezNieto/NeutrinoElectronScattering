@@ -34,6 +34,8 @@ void CrossSection(double EnuIn = 10.){
 
   TH2F *histEvsang = new TH2F("histEvsang"," ",100,0.,3.141592/2,100,0.,TMath::Abs(EnuIn));
   TH2F *histEvsangl = new TH2F("histEvsangl"," ",100,0.,3.141592/2,100,0.,TMath::Abs(EnuIn)); 
+
+  TH2F *ErecovsE = new TH2F("ErecovsE","",100,0.,TMath::Abs(EnuIn),100,0.,TMath::Abs(EnuIn)); 
   
   TRandom r;
 
@@ -62,7 +64,7 @@ void CrossSection(double EnuIn = 10.){
 
     nul.GENcrosssection(Enu,a,b,-neutrinotype); 
 
-    histEMCanu->Fill(a,1./1.e+8); 
+    histEMCanu->Fill(a,1./1.e+8);
     
     double Ee  = r.Uniform(nul.electronmass(),Enu);
     
@@ -71,7 +73,11 @@ void CrossSection(double EnuIn = 10.){
 
     double cos = nul.GetCosine(Enu,Ee,neutrinotype);
     double theta = acos(cos); 
-    double Etheta2 = Ee*theta*theta; 
+    double Etheta2 = Ee*theta*theta;
+
+
+    ErecovsE->Fill(Enu,nul.GetEnu(cos,Ee,neutrinotype)); 
+    
     //  if( abs(cos) > 1 ) continue;
     
     if(xs > 0 ) {

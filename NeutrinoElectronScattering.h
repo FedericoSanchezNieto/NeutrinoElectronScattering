@@ -121,7 +121,7 @@ class NeutrinoElectronScattering {
 
     double Pl = sqrt(El*El-mass*mass); 
    
-    return (El*mass-mass*mass)/(El+mass+Pl*Cosine);
+    return (El*mass-mass*mass)/(-El+mass+Pl*Cosine);
 
   }
   
