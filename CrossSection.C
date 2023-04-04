@@ -7,7 +7,7 @@
 #include "TRandom.h"
 #include <iostream> 
 
-void CrossSection(double EnuIn = 10.){
+void CrossSection(double EnuIn = 10.,double Emin = 0 ){
 
   TH1F *histang = new TH1F("histang","",1000,0.,3.141592/2);
   TH1F *histanganu = new TH1F("histanganu","",1000,0.,3.141592/2.);
@@ -45,12 +45,12 @@ void CrossSection(double EnuIn = 10.){
   
   double Enu;
   
-  for(int i = 0; i < 1e+7; i++ ) {
+  for(int i = 0; i < 1e+6; i++ ) {
 
     double a,b;
 
     if( EnuIn < 0 )
-      Enu = r.Uniform(0.,-EnuIn);
+      Enu = r.Uniform(Emin,-EnuIn);
     else
       Enu = EnuIn;
 	
@@ -185,6 +185,14 @@ void CrossSection(double EnuIn = 10.){
   histEvsang->GetXaxis()->SetTitle("#theta_{e} (rads)");
   histEvsang->GetYaxis()->SetTitle("E_{e} (MeV)"); 
   c3->Update(); 
+
+  TCanvas *c4 = new TCanvas("c4","",800,800);
+  ErecovsE->Draw("colz");
+  ErecovsE->GetXaxis()->SetTitle("E_{#nu} (MeV)");
+  ErecovsE->GetYaxis()->SetTitle("E^{Rec}_{#nu} (MeV)"); 
+  c4->Update(); 
+
+
   
 }
 
